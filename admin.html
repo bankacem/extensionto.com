@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Panel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Quill CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">Admin Panel</div>
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item list-group-item-action bg-light active" data-section="add-article">Add New Article</a>
+                <a href="#" class="list-group-item list-group-item-action bg-light" data-section="manage-articles">Manage Articles</a>
+                <a href="index.html" class="list-group-item list-group-item-action bg-light">View Site</a>
+                <button class="btn btn-danger list-group-item list-group-item-action mt-3" id="logoutButton">Logout</button>
+            </div>
+        </div>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-4">
+                <div id="add-article-section" class="content-section">
+                    <h2>Add New Article</h2>
+                    <form id="addArticleForm">
+                        <div class="mb-3">
+                            <label for="articleTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="articleTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="articleContent" class="form-label">Content</label>
+                            <div id="articleContent" style="height: 300px;"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="metaDescription" class="form-label">Meta Description</label>
+                            <input type="text" class="form-control" id="metaDescription">
+                        </div>
+                        <div class="mb-3">
+                            <label for="keywords" class="form-label">Keywords</label>
+                            <input type="text" class="form-control" id="keywords">
+                        </div>
+                        <div class="mb-3">
+                            <label for="featuredImage" class="form-label">Featured Image URL</label>
+                            <input type="url" class="form-control" id="featuredImage">
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Article</button>
+                    </form>
+                </div>
+
+                <div id="manage-articles-section" class="content-section d-none">
+                    <h2>Manage Articles</h2>
+                    <p>Article management features will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Quill JS -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
+    <script type="module" src="assets/js/admin.js"></script>
+</body>
+</html>

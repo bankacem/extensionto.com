@@ -1,0 +1,8 @@
+name = "articles-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-10"
+
+[d1_databases]
+binding = "DB" # This is the binding name that will be available in your Worker
+database_name = "articles-db" # Name of your D1 database
+database_id = "YOUR_DATABASE_ID" # Replace with your actual database ID
