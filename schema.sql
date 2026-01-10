@@ -6,6 +6,10 @@ CREATE TABLE IF NOT EXISTS articles (
     meta_description TEXT,
     keywords TEXT,
     featured_image TEXT,
+    status TEXT DEFAULT 'Draft',
+    category TEXT,
+    scheduled_at DATETIME,
+    views INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

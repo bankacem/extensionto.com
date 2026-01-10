@@ -1,75 +1,338 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control Panel</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Editorial Hub | ExtensionTo CMS</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Quill CSS -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-item-active {
+            background: #6366f1;
+            color: white;
+            border-radius: 0.5rem;
+        }
+
+        .sidebar-item:hover:not(.sidebar-item-active) {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
 </head>
-<body>
-    <div class="d-flex" id="wrapper">
-        <!-- Sidebar -->
-        <div class="bg-light border-right" id="sidebar-wrapper">
-            <div class="sidebar-heading">Admin Panel</div>
-            <div class="list-group list-group-flush">
-                <a href="#" class="list-group-item list-group-item-action bg-light active" data-section="add-article">Add New Article</a>
-                <a href="#" class="list-group-item list-group-item-action bg-light" data-section="manage-articles">Manage Articles</a>
-                <a href="index.html" class="list-group-item list-group-item-action bg-light">View Site</a>
-                <button class="btn btn-danger list-group-item list-group-item-action mt-3" id="logoutButton">Logout</button>
-            </div>
+
+<body class="bg-[#0f172a] text-slate-200 min-h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 glass border-r border-slate-800 flex flex-col transition-all duration-300">
+        <div class="p-6">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-emerald-500 bg-clip-text text-transparent">
+                EDITORIAL HUB
+            </h1>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">ExtensionTo CMS v3.0</p>
         </div>
-        <!-- Page Content -->
-        <div id="page-content-wrapper">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-                <div class="container-fluid">
-                    <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
-                </div>
-            </nav>
 
-            <div class="container-fluid p-4">
-                <div id="add-article-section" class="content-section">
-                    <h2>Add New Article</h2>
-                    <form id="addArticleForm">
-                        <div class="mb-3">
-                            <label for="articleTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="articleTitle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="articleContent" class="form-label">Content</label>
-                            <div id="articleContent" style="height: 300px;"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="metaDescription" class="form-label">Meta Description</label>
-                            <input type="text" class="form-control" id="metaDescription">
-                        </div>
-                        <div class="mb-3">
-                            <label for="keywords" class="form-label">Keywords</label>
-                            <input type="text" class="form-control" id="keywords">
-                        </div>
-                        <div class="mb-3">
-                            <label for="featuredImage" class="form-label">Featured Image URL</label>
-                            <input type="url" class="form-control" id="featuredImage">
-                        </div>
-                        <button type="submit" class="btn btn-success">Save Article</button>
-                    </form>
-                </div>
+        <nav class="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+            <button onclick="switchTab('overview')"
+                class="sidebar-item sidebar-item-active flex items-center w-full px-4 py-3 gap-3 transition-colors"
+                data-tab="overview">
+                <i class="fas fa-th-large w-5"></i><span>Overview</span>
+            </button>
+            <button onclick="switchTab('editorial')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="editorial">
+                <i class="fas fa-pen-nib w-5"></i><span>Editorial</span>
+            </button>
+            <button onclick="switchTab('knowledge')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="knowledge">
+                <i class="fas fa-database w-5"></i><span>Knowledge Base</span>
+            </button>
+            <button onclick="switchTab('queue')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="queue">
+                <i class="fas fa-clock w-5"></i><span>Queue</span>
+            </button>
+            <button onclick="switchTab('assets')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="assets">
+                <i class="fas fa-icons w-5"></i><span>Asset Registry</span>
+            </button>
+            <button onclick="switchTab('impact')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="impact">
+                <i class="fas fa-chart-line w-5"></i><span>Engagement</span>
+            </button>
+            <button onclick="switchTab('continuity')"
+                class="sidebar-item flex items-center w-full px-4 py-3 gap-3 transition-colors" data-tab="continuity">
+                <i class="fas fa-shield-halved w-5"></i><span>Continuity</span>
+            </button>
+        </nav>
 
-                <div id="manage-articles-section" class="content-section d-none">
-                    <h2>Manage Articles</h2>
-                    <p>Article management features will be displayed here.</p>
-                </div>
-            </div>
+        <div class="p-4 border-t border-slate-800">
+            <button id="logoutButton"
+                class="flex items-center w-full px-4 py-2 gap-3 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+                <i class="fas fa-sign-out-alt"></i><span>Sign Out</span>
+            </button>
         </div>
-    </div>
+    </aside>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Quill JS -->
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+        <!-- Header -->
+        <header class="h-16 glass border-b border-slate-800 flex items-center justify-between px-8 z-10">
+            <div class="flex items-center gap-4">
+                <button id="sidebarToggle" class="text-slate-400 hover:text-white lg:hidden">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 id="currentTabTitle" class="font-semibold text-lg">System Overview</h2>
+            </div>
+            <div id="toastContainer" class="fixed top-4 right-4 z-50"></div>
+        </header>
+
+        <!-- Content Area -->
+        <div id="tabContent" class="flex-1 overflow-y-auto p-8 bg-[#0f172a]/50">
+
+            <!-- Overview Tab -->
+            <section id="tab-overview" class="tab-pane space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <div class="flex justify-between items-start">
+                            <p class="text-slate-400 text-sm">Impressions</p>
+                            <span class="text-indigo-400 bg-indigo-400/10 px-2 py-1 rounded text-xs">+12%</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mt-2">1.2M</h3>
+                        <p class="text-xs text-slate-500 mt-4">Total reach across all assets</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <p class="text-slate-400 text-sm">Live Assets</p>
+                        <h3 class="text-2xl font-bold mt-2">154</h3>
+                        <p class="text-xs text-slate-500 mt-4">Active published articles</p>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <p class="text-slate-400 text-sm">Pending Sync</p>
+                        <h3 class="text-2xl font-bold mt-2">12</h3>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full mt-4">
+                            <div class="bg-emerald-500 h-full rounded-full w-[65%]"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-6 rounded-2xl border border-slate-800">
+                    <h4 class="font-semibold mb-6">Engagement Spectrum</h4>
+                    <canvas id="engagementChart" height="100"></canvas>
+                </div>
+            </section>
+
+            <!-- Editorial Tab -->
+            <section id="tab-editorial" class="tab-pane hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">Composition Hub</h3>
+                    <div class="flex gap-3">
+                        <button
+                            class="px-4 py-2 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all font-medium">
+                            <i class="fas fa-robot mr-2"></i> AI Assistant
+                        </button>
+                        <button id="saveArticleBtn"
+                            class="px-6 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 transition-all font-semibold">
+                            <i class="fas fa-paper-plane mr-2"></i> Save & Broadcast
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <input type="text" id="articleTitle" placeholder="Article Title..."
+                            class="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-xl font-bold focus:outline-none focus:border-indigo-500 transition-all">
+                        <div id="editorContainer" class="glass rounded-xl border border-slate-700 overflow-hidden">
+                            <div id="articleEditor" style="height: 500px;" class="text-lg"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="glass p-6 rounded-xl border border-slate-800 space-y-4">
+                            <h4 class="font-semibold text-sm uppercase tracking-wider text-slate-500">Metadata</h4>
+                            <div>
+                                <label class="block text-xs mb-1 text-slate-400">Category</label>
+                                <select id="articleCategory"
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none">
+                                    <option>General</option>
+                                    <option>Guides</option>
+                                    <option>News</option>
+                                    <option>Technical</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs mb-1 text-slate-400">Visibility Status</label>
+                                <select id="articleStatus"
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none">
+                                    <option value="Draft">Draft</option>
+                                    <option value="Published">Published</option>
+                                    <option value="Scheduled">Scheduled</option>
+                                </select>
+                            </div>
+                            <div id="schedulingField" class="hidden">
+                                <label class="block text-xs mb-1 text-slate-400">Schedule Date</label>
+                                <input type="datetime-local" id="scheduledAt"
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs mb-1 text-slate-400">Featured Image URL</label>
+                                <input type="url" id="featuredImage" placeholder="https://..."
+                                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-xl border border-slate-800">
+                            <h4 class="font-semibold text-sm uppercase tracking-wider text-slate-500 mb-4">SEO Booster
+                            </h4>
+                            <textarea id="metaDescription" placeholder="Meta description..."
+                                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 mb-4 h-24 focus:outline-none"></textarea>
+                            <input type="text" id="keywords" placeholder="Keywords (comma separated)"
+                                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other Tabs Placeholders -->
+            <section id="tab-knowledge" class="tab-pane hidden">
+                <div class="glass p-8 rounded-2xl border border-slate-800 text-center">
+                    <i class="fas fa-database text-4xl mb-4 text-indigo-500"></i>
+                    <h3 class="text-xl font-bold">Knowledge Base</h3>
+                    <p class="text-slate-400">Feature integration in progress...</p>
+                </div>
+            </section>
+
+            <section id="tab-queue" class="tab-pane hidden">
+                <div class="glass p-8 rounded-2xl border border-slate-800 text-center">
+                    <i class="fas fa-clock text-4xl mb-4 text-emerald-500"></i>
+                    <h3 class="text-xl font-bold">Editorial Queue</h3>
+                    <p class="text-slate-400">Feature integration in progress...</p>
+                </div>
+            </section>
+
+            <section id="tab-assets" class="tab-pane hidden">
+                <div class="glass p-8 rounded-2xl border border-slate-800 text-center">
+                    <i class="fas fa-icons text-4xl mb-4 text-pink-500"></i>
+                    <h3 class="text-xl font-bold">Digital Asset Registry</h3>
+                    <p class="text-slate-400">Feature integration in progress...</p>
+                </div>
+            </section>
+
+            <!-- Engagement Impact Tab -->
+            <section id="tab-impact" class="tab-pane hidden space-y-8">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">Engagement Impact</h3>
+                    <div class="flex gap-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
+                        <span class="px-3 py-1 bg-slate-800 rounded-full border border-slate-700">Real-time
+                            Analysis</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 glass p-6 rounded-2xl border border-slate-800">
+                        <h4 class="font-semibold mb-6 flex items-center gap-2">
+                            <i class="fas fa-chart-column text-indigo-400"></i> Reach Historical Architecture
+                        </h4>
+                        <canvas id="impactChart" height="200"></canvas>
+                    </div>
+
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <h4 class="font-semibold mb-6 flex items-center gap-2">
+                            <i class="fas fa-trophy text-amber-400"></i> Asset Rankings
+                        </h4>
+                        <div class="space-y-4" id="assetRankings">
+                            <div
+                                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-indigo-400 font-bold">#1</span>
+                                    <div>
+                                        <p class="text-sm font-medium truncate w-32">Marketing Guide...</p>
+                                        <p class="text-[10px] text-slate-500 uppercase">Guides</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono">12.4k views</span>
+                            </div>
+                            <div
+                                class="flex items-center justify-between p-3 bg-slate-800/30 rounded-xl border border-slate-700/50">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-indigo-400 font-bold">#2</span>
+                                    <div>
+                                        <p class="text-sm font-medium truncate w-32">Vercel Deployment...</p>
+                                        <p class="text-[10px] text-slate-500 uppercase">Technical</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono">8.1k views</span>
+                            </div>
+                        </div>
+                        <button
+                            class="w-full mt-6 py-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors uppercase font-bold tracking-widest">
+                            View Full Spectrum
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-continuity" class="tab-pane hidden space-y-6">
+                <h3 class="text-2xl font-bold">System Continuity</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <h4 class="font-semibold mb-4">Data Vault</h4>
+                        <div class="flex gap-4">
+                            <button id="exportBtn"
+                                class="flex-1 px-4 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-xl font-medium transition-all">
+                                <i class="fas fa-download mr-2"></i> Export Master JSON
+                            </button>
+                            <button id="importBtn"
+                                class="flex-1 px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-medium transition-all">
+                                <i class="fas fa-upload mr-2"></i> Restore Vault
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-800">
+                        <h4 class="font-semibold mb-4">SEO Cloud</h4>
+                        <div class="flex gap-4">
+                            <button
+                                class="flex-1 px-4 py-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl font-medium transition-all">
+                                <i class="fas fa-sitemap mr-2"></i> Regenerate Sitemap
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
     <script type="module" src="assets/js/admin.js"></script>
 </body>
+
 </html>
