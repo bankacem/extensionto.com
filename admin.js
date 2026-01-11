@@ -1,7 +1,5 @@
-import config from './config.js';
-
-// Configuration
-const API_BASE = 'http://localhost:8787'; // Update this to your deployed worker URL
+// Configuration - EASY TO FIND: Update this to your deployed Worker URL
+const API_BASE = 'http://localhost:8787';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Auth Check
@@ -54,28 +52,28 @@ function initSidebar() {
         // Update Title
         const titles = {
             overview: 'System Overview',
-            editorial: 'Composition Hub',
+            editorial: 'Content Creation',
             knowledge: 'Knowledge Base',
-            queue: 'Editorial Queue',
-            assets: 'Digital Asset Registry',
-            impact: 'Engagement Impact',
-            continuity: 'System Continuity'
+            queue: 'Content Queue',
+            assets: 'Digital Assets',
+            analytics: 'Analytics Dashboard',
+            system: 'System Management'
         };
         document.getElementById('currentTabTitle').textContent = titles[tabName] || 'Dashboard';
 
         // Update Active Sidebar Item
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('sidebar-item-active');
-            if (item.dataset.tab === tabName) item.classList.add('sidebar-item-active');
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('nav-item-active');
+            if (item.dataset.tab === tabName) item.classList.add('nav-item-active');
         });
 
         // Toggle Visibility
-        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+        document.querySelectorAll('.tab-content').forEach(pane => pane.classList.add('hidden'));
         const activePane = document.getElementById(`tab-${tabName}`);
         if (activePane) activePane.classList.remove('hidden');
 
         // Re-init specific components if needed
-        if (tabName === 'overview' || tabName === 'impact') initCharts();
+        if (tabName === 'overview' || tabName === 'analytics') initCharts();
     };
 }
 
@@ -101,7 +99,7 @@ function initEditor() {
 }
 
 // Charts Initialization
-let engagementChart, impactChart;
+let engagementChart, analyticsChart;
 function initCharts() {
     // 1. Engagement Line Chart (Overview)
     const ctxEngagement = document.getElementById('engagementChart');
@@ -114,8 +112,8 @@ function initCharts() {
                 datasets: [{
                     label: 'Reach',
                     data: [12000, 19000, 15000, 25000, 22000, 30000],
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     fill: true,
                     tension: 0.4
                 }]
@@ -131,18 +129,18 @@ function initCharts() {
         });
     }
 
-    // 2. Impact Bar Chart (Engagement)
-    const ctxImpact = document.getElementById('impactChart');
-    if (ctxImpact) {
-        if (impactChart) impactChart.destroy();
-        impactChart = new Chart(ctxImpact, {
+    // 2. Analytics Bar Chart (Analytics)
+    const ctxAnalytics = document.getElementById('analyticsChart');
+    if (ctxAnalytics) {
+        if (analyticsChart) analyticsChart.destroy();
+        analyticsChart = new Chart(ctxAnalytics, {
             type: 'bar',
             data: {
                 labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                 datasets: [{
-                    label: 'New Users',
-                    data: [450, 680, 520, 940],
-                    backgroundColor: '#10b981',
+                    label: 'Page Views',
+                    data: [4500, 6800, 5200, 9400],
+                    backgroundColor: '#8b5cf6',
                     borderRadius: 8
                 }]
             },
@@ -162,12 +160,12 @@ function initCharts() {
 async function saveArticle() {
     const title = document.getElementById('articleTitle').value;
     const content_html = quill ? quill.root.innerHTML : '';
-    const category = document.getElementById('articleCategory').value;
     const status = document.getElementById('articleStatus').value;
+    const category = document.getElementById('articleCategory').value;
     const scheduled_at = document.getElementById('scheduledAt').value;
-    const featured_image = document.getElementById('featuredImage').value;
     const meta_description = document.getElementById('metaDescription').value;
     const keywords = document.getElementById('keywords').value;
+    const featured_image = document.getElementById('featuredImage').value;
 
     if (!title) {
         showToast('Title is required!', 'error');
@@ -183,15 +181,25 @@ async function saveArticle() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                title, content_html, category, status, scheduled_at, featured_image, meta_description, keywords
+                title,
+                content_html,
+                meta_description,
+                keywords,
+                featured_image,
+                status,
+                category,
+                scheduled_at
             })
         });
 
         if (response.ok) {
-            showToast('Article saved with success!', 'success');
+            showToast('Article saved successfully!', 'success');
             // Clear form (optional)
             document.getElementById('articleTitle').value = '';
             quill.setContents([]);
+            document.getElementById('metaDescription').value = '';
+            document.getElementById('keywords').value = '';
+            document.getElementById('featuredImage').value = '';
         } else {
             const err = await response.text();
             showToast(`Failed to save: ${err}`, 'error');
@@ -200,7 +208,7 @@ async function saveArticle() {
         showToast(`Network Error: ${error.message}`, 'error');
     } finally {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Save & Broadcast';
+        saveBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Save & Publish';
     }
 }
 
